@@ -35,6 +35,7 @@ class Swiper extends StatefulWidget {
 
   // height of the inside container,this property is valid when outer=true,otherwise the inside container size is controlled by parent widget
   final double containerHeight;
+
   // width of the inside container,this property is valid when outer=true,otherwise the inside container size is controlled by parent widget
   final double containerWidth;
 
@@ -112,6 +113,9 @@ class Swiper extends StatefulWidget {
 
   final PageIndicatorLayout indicatorLayout;
 
+  final VoidCallback onStartSwipe;
+  final VoidCallback onEndSwipe;
+
   Swiper({
     this.itemBuilder,
     this.indicatorLayout: PageIndicatorLayout.NONE,
@@ -148,6 +152,8 @@ class Swiper extends StatefulWidget {
     this.scale,
     this.fade,
     this.tinderOffset: 10,
+    this.onStartSwipe,
+    this.onEndSwipe,
   })  : assert(itemBuilder != null || transformer != null,
             "itemBuilder and transformItemBuilder must not be both null"),
         assert(
@@ -488,6 +494,8 @@ class _SwiperState extends _SwiperTimerMixin {
         onIndexChanged: _onIndexChanged,
         controller: _controller,
         scrollDirection: widget.scrollDirection,
+        onStartSwipe: widget.onStartSwipe,
+        onEndSwipe: widget.onEndSwipe,
       );
     } else if (_isPageViewLayout()) {
       PageTransformer transformer = widget.transformer;
@@ -668,21 +676,25 @@ abstract class _SubSwiper extends StatefulWidget {
   final double itemHeight;
   final bool loop;
   final Axis scrollDirection;
+  final VoidCallback onStartSwipe;
+  final VoidCallback onEndSwipe;
 
-  _SubSwiper(
-      {Key key,
-      this.loop,
-      this.itemHeight,
-      this.itemWidth,
-      this.duration,
-      this.curve,
-      this.itemBuilder,
-      this.controller,
-      this.index,
-      this.itemCount,
-      this.scrollDirection: Axis.horizontal,
-      this.onIndexChanged})
-      : super(key: key);
+  _SubSwiper({
+    Key key,
+    this.loop,
+    this.itemHeight,
+    this.itemWidth,
+    this.duration,
+    this.curve,
+    this.itemBuilder,
+    this.controller,
+    this.index,
+    this.itemCount,
+    this.scrollDirection: Axis.horizontal,
+    this.onIndexChanged,
+    this.onStartSwipe,
+    this.onEndSwipe,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState();
@@ -751,19 +763,24 @@ class _StackSwiper extends _SubSwiper {
     bool loop,
     int itemCount,
     Axis scrollDirection,
+    VoidCallback onStartSwipe,
+    VoidCallback onEndSwipe,
   }) : super(
-            loop: loop,
-            key: key,
-            itemWidth: itemWidth,
-            itemHeight: itemHeight,
-            itemBuilder: itemBuilder,
-            curve: curve,
-            duration: duration,
-            controller: controller,
-            index: index,
-            onIndexChanged: onIndexChanged,
-            itemCount: itemCount,
-            scrollDirection: scrollDirection);
+          loop: loop,
+          key: key,
+          itemWidth: itemWidth,
+          itemHeight: itemHeight,
+          itemBuilder: itemBuilder,
+          curve: curve,
+          duration: duration,
+          controller: controller,
+          index: index,
+          onIndexChanged: onIndexChanged,
+          itemCount: itemCount,
+          scrollDirection: scrollDirection,
+          onStartSwipe: onStartSwipe,
+          onEndSwipe: onEndSwipe,
+        );
 
   @override
   State<StatefulWidget> createState() {
@@ -881,6 +898,7 @@ class _StackViewState extends _CustomLayoutStateBase<_StackSwiper> {
   List<double> scales;
   List<double> offsets;
   List<double> opacity;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();

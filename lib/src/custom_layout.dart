@@ -217,6 +217,7 @@ abstract class _CustomLayoutStateBase<T extends _SubSwiper> extends State<T>
     } else {
       _move(0.5);
     }
+    widget.onEndSwipe();
   }
 
   void _onPanStart(DragStartDetails details) {
@@ -225,6 +226,7 @@ abstract class _CustomLayoutStateBase<T extends _SubSwiper> extends State<T>
     _currentPos = widget.scrollDirection == Axis.horizontal
         ? details.globalPosition.dx
         : details.globalPosition.dy;
+    widget.onStartSwipe();
   }
 
   void _onPanUpdate(DragUpdateDetails details) {
@@ -374,34 +376,39 @@ class CustomLayoutOption {
 class _CustomLayoutSwiper extends _SubSwiper {
   final CustomLayoutOption option;
 
-  _CustomLayoutSwiper(
-      {this.option,
-      double itemWidth,
-      bool loop,
-      double itemHeight,
-      ValueChanged<int> onIndexChanged,
-      Key key,
-      IndexedWidgetBuilder itemBuilder,
-      Curve curve,
-      int duration,
-      int index,
-      int itemCount,
-      Axis scrollDirection,
-      SwiperController controller})
-      : assert(option != null),
+  _CustomLayoutSwiper({
+    this.option,
+    double itemWidth,
+    bool loop,
+    double itemHeight,
+    ValueChanged<int> onIndexChanged,
+    Key key,
+    IndexedWidgetBuilder itemBuilder,
+    Curve curve,
+    int duration,
+    int index,
+    int itemCount,
+    Axis scrollDirection,
+    SwiperController controller,
+    VoidCallback onStartSwipe,
+    VoidCallback onEndSwipe,
+  })  : assert(option != null),
         super(
-            loop: loop,
-            onIndexChanged: onIndexChanged,
-            itemWidth: itemWidth,
-            itemHeight: itemHeight,
-            key: key,
-            itemBuilder: itemBuilder,
-            curve: curve,
-            duration: duration,
-            index: index,
-            itemCount: itemCount,
-            controller: controller,
-            scrollDirection: scrollDirection);
+          loop: loop,
+          onIndexChanged: onIndexChanged,
+          itemWidth: itemWidth,
+          itemHeight: itemHeight,
+          key: key,
+          itemBuilder: itemBuilder,
+          curve: curve,
+          duration: duration,
+          index: index,
+          itemCount: itemCount,
+          controller: controller,
+          scrollDirection: scrollDirection,
+          onStartSwipe: onStartSwipe,
+          onEndSwipe: onEndSwipe,
+        );
 
   @override
   State<StatefulWidget> createState() {
