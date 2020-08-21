@@ -40,6 +40,9 @@ abstract class _CustomLayoutStateBase<T extends _SubSwiper> extends State<T>
   @mustCallSuper
   void afterRender() {
     RenderObject renderObject = context.findRenderObject();
+    if (!renderObject.attached) {
+      return;
+    }
     Size size = renderObject.paintBounds.size;
     _swiperWidth = size.width;
     _swiperHeight = size.height;
